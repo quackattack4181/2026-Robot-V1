@@ -53,8 +53,8 @@ public class RobotContainer {
   Command driveFieldOrientedDirectAngle = drivebase.driveCommand(
       () -> MathUtil.applyDeadband(-driverOne.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND), // <<<===== CHANGED from -
       () -> MathUtil.applyDeadband(-driverOne.getLeftX(), OperatorConstants.LEFT_X_DEADBAND), // <<<===== CHANGED from -
-      () -> -driverOne.getRightX(), // <<<===== CHANGED from -
-      () -> -driverOne.getRightY()); // <<<===== CHANGED from -
+      this::getDriverHeadingX,
+      this::getDriverHeadingY);
 
   // Applies deadbands and inverts controls because joysticks
   // are back-right positive while robot
@@ -137,6 +137,26 @@ public class RobotContainer {
     //        Driver Two Controls #2
     //========================================
 
+  }
+
+  private double getDriverHeadingX() {
+    double headingX = MathUtil.applyDeadband(-driverOne.getRightX(), OperatorConstants.RIGHT_X_DEADBAND);
+    double headingY = MathUtil.applyDeadband(-driverOne.getRightY(), OperatorConstants.RIGHT_X_DEADBAND);
+    if (Math.hypot(headingX, headingY) < 1e-4) {
+      double headingRadians = drivebase.getHeading().getRadians();
+      return Math.cos(headingRadians);
+    }
+    return headingX;
+  }
+
+  private double getDriverHeadingY() {
+    double headingX = MathUtil.applyDeadband(-driverOne.getRightX(), OperatorConstants.RIGHT_X_DEADBAND);
+    double headingY = MathUtil.applyDeadband(-driverOne.getRightY(), OperatorConstants.RIGHT_X_DEADBAND);
+    if (Math.hypot(headingX, headingY) < 1e-4) {
+      double headingRadians = drivebase.getHeading().getRadians();
+      return Math.sin(headingRadians);
+    }
+    return headingY;
   }
 
 
